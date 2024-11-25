@@ -54,8 +54,8 @@ Address.create = (address, result) => {
         [
             address.address,
             address.neighborhood,
-            address.lat || 0,
-            address.lng || 0,
+            address.lat,
+            address.lng,
             address.id_user,
             new Date(),
             new Date(),
