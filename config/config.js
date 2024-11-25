@@ -31,3 +31,4 @@ function handleDisconnect() {
 }
 
 handleDisconnect(); // Iniciar la conexión
+module.exports = db;
