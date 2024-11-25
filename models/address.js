@@ -35,13 +35,13 @@ Address.findByUser = (id_user, result) => {
 
 Address.create = (address, result) => {
 
+    // lat,
+    // lng,
     const sql = `
     INSERT INTO
         address(
             address,
-            neighborhood,
-            lat,
-            lng,
+            neighborhood, 
             id_user,
             created_at,
             updated_at   
@@ -54,8 +54,8 @@ Address.create = (address, result) => {
         [
             address.address,
             address.neighborhood,
-            address.lat,
-            address.lng,
+            // address.lat,
+            // address.lng,
             address.id_user,
             new Date(),
             new Date(),
