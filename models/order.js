@@ -82,7 +82,7 @@ Order.findByStatus = (status, result) => {
         status,
         (err, data) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
@@ -175,7 +175,7 @@ Order.findByDeliveryAndStatus = (id_delivery, status, result) => {
         ],
         (err, data) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
@@ -268,7 +268,7 @@ Order.findByClientAndStatus = (id_client, status, result) => {
         ],
         (err, data) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
@@ -305,11 +305,11 @@ Order.create = (order, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Id de la nueva orden:', res.insertId);
+                // console.log('Id de la nueva orden:', res.insertId);
                 result(null, res.insertId);
             }
         }
@@ -340,7 +340,7 @@ Order.updateToDispatched = (id_order, id_delivery, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
@@ -370,7 +370,7 @@ Order.updateToOnTheWay = (id_order, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
@@ -400,7 +400,7 @@ Order.updateToDelivered = (id_order, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
@@ -432,7 +432,7 @@ Order.updateLatLng = (order, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {

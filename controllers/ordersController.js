@@ -131,7 +131,7 @@ module.exports = {
                 
                 if (user !== undefined && user !== null) {
 
-                    console.log('NOTIFICATION TOKEN', user.notification_token);
+                    // console.log('NOTIFICATION TOKEN', user.notification_token);
                     PushNotificationsController.sendNotification(user.notification_token, {
                         title: 'PEDIDO ASIGNADO',
                         body: 'Te han asignado un pedido para entregar',

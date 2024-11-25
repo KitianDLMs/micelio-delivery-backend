@@ -24,11 +24,11 @@ Product.findByCategory = (id_category, result) => {
         [id_category],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Id de la nuevo producto:', res);
+                // console.log('Id de la nuevo producto:', res);
                 result(null, res);
             }
         }
@@ -60,11 +60,11 @@ Product.findByNameAndCategory = (name, id_category, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Id de la nuevo producto:', res);
+                // console.log('Id de la nuevo producto:', res);
                 result(null, res);
             }
         }
@@ -104,11 +104,11 @@ Product.create = (product, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Id de la nuevo producto:', res.insertId);
+                // console.log('Id de la nuevo producto:', res.insertId);
                 result(null, res.insertId);
             }
         }
@@ -150,11 +150,11 @@ Product.update = (product, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Id del producto actualizado:', product.id);
+                // console.log('Id del producto actualizado:', product.id);
                 result(null, product.id);
             }
         }

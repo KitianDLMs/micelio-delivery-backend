@@ -22,7 +22,7 @@ Address.findByUser = (id_user, result) => {
         id_user,
         (err, data) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
@@ -62,11 +62,11 @@ Address.create = (address, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Id de la nueva direccion:', res.insertId);
+                // console.log('Id de la nueva direccion:', res.insertId);
                 result(null, res.insertId);
             }
         }

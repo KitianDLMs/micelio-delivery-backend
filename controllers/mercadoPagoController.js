@@ -12,7 +12,7 @@ module.exports = {
     async createPayment(req, res) {        
         let payment = req.body;
 
-        console.log('PAYMENT: ', payment);
+        // console.log('PAYMENT: ', payment);
 
         const payment_data = {
           token: payment.token,

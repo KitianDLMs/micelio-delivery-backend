@@ -44,7 +44,7 @@ User.findById = (id, result) => {
         [id],
         (err, user) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
@@ -82,7 +82,7 @@ User.findDeliveryMen = (result) => {
         sql,
         (err, data) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
@@ -132,12 +132,12 @@ User.findByEmail = (email, result) => {
         [email],
         (err, user) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log(sql);
-                console.log('Usuario obtenido:', user[0]);
+                // console.log(sql);
+                // console.log('Usuario obtenido:', user[0]);
                 result(null, user[0]);
             }
         }
@@ -179,11 +179,11 @@ User.create = async (user, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Id del nuevo usuario:', res.insertId);
+                // console.log('Id del nuevo usuario:', res.insertId);
                 result(null, res.insertId);
             }
         }
@@ -219,11 +219,11 @@ User.update = (user, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Usuario actualizado:', user.id);
+                // console.log('Usuario actualizado:', user.id);
                 result(null, user.id);
             }
         }
@@ -256,11 +256,11 @@ User.updateWithoutImage = (user, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Usuario actualizado:', user.id);
+                // console.log('Usuario actualizado:', user.id);
                 result(null, user.id);
             }
         }
@@ -290,7 +290,7 @@ User.updateNotificationToken = (id, token, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {

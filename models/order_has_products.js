@@ -29,11 +29,11 @@ OrderHasProducts.create = (id_order, id_product, quantity, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Id de la nueva order_has_products:', res.insertId);
+                // console.log('Id de la nueva order_has_products:', res.insertId);
                 result(null, res.insertId);
             }
         }

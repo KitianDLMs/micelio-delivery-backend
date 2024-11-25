@@ -19,11 +19,11 @@ Rol.create = (id_user, id_rol, result) => {
         [id_user, id_rol, new Date(), new Date()],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Usuario obtenido:', res.insertId);
+                // console.log('Usuario obtenido:', res.insertId);
                 result(null, res.insertId);
             }
         }

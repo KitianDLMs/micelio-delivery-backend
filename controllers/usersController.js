@@ -29,7 +29,7 @@ module.exports = {
 
         User.findByEmail(email, async (err, myUser) => {
             
-            console.log('Error ', err);
+            // console.log('Error ', err);
 
             if (err) {
                 return res.status(501).json({

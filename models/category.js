@@ -18,11 +18,11 @@ Category.getAll = (result) => {
         sql,
         (err, data) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Categorias:', data);
+                // console.log('Categorias:', data);
                 result(null, data);
             }
         }
@@ -52,11 +52,11 @@ Category.create = (category, result) => {
         ],
         (err, res) => {
             if (err) {
-                console.log('Error:', err);
+                // console.log('Error:', err);
                 result(err, null);
             }
             else {
-                console.log('Id de la nueva categoria:', res.insertId);
+                // console.log('Id de la nueva categoria:', res.insertId);
                 result(null, res.insertId);
             }
         }

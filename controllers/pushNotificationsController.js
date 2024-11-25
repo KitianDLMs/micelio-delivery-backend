@@ -35,7 +35,7 @@ module.exports = {
         }
 
         const req = https.request(options, (res) => {
-            console.log('STATUS CODE FIREBASE', res.statusCode);
+            // console.log('STATUS CODE FIREBASE', res.statusCode);
 
             res.on('data', (d) => {
                 process.stdout.write(d);
