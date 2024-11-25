@@ -25,6 +25,7 @@ module.exports = {
         Address.create(address, (err, id) => {
 
             if (err) {
+                console.log(err);
                 return res.status(501).json({
                     success: false,
                     message: 'Hubo un error con el registro de la direccion',
