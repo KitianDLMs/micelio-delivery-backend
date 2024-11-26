@@ -10,7 +10,7 @@ const io = require('socket.io')(server);
 const mercadopago = require('mercadopago');
 mercadopago.configure({
     sandbox: true,
-    access_token: 'TEST-6028900970379574-062302-e3e5d11b7871ee742832e6351694608f-191014229'
+    access_token: 'TEST-7543954477442042-103010-6f46675043d2151dce61b8b557f01d41-122925330'
 });
 
 /*

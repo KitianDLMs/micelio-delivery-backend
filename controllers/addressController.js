@@ -20,7 +20,6 @@ module.exports = {
     create(req, res) {
 
         const address = req.body;
-        // console.log('ADDRESS: ', address);
 
         Address.create(address, (err, id) => {
 
@@ -36,7 +35,7 @@ module.exports = {
             return res.status(201).json({
                 success: true,
                 message: 'La direccion se creo correctamente',
-                data: `${id}` // EL ID DE LA NUEVA DIRECCION
+                data: `${id}`
             });
 
         });
