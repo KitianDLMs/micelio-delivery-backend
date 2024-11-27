@@ -153,7 +153,6 @@ module.exports = {
     updateToOnTheWay(req, res) {
         const order = req.body;
 
-
         Order.updateToOnTheWay(order.id, (err, id_order) => {
             if (err) {
                 return res.status(501).json({
