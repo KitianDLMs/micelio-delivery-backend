@@ -1,21 +1,15 @@
 const mysql = require('mysql');
 
-const pool = mysql.createPool({
+const db = mysql.createConnection({
     host: 'bycyqzbdadxwtqtuvaoa-mysql.services.clever-cloud.com',
     user: 'ufk4d4narvb0tavn',
     password: 'XU9lekbFRYrbXsOVCY79',
-    database: 'bycyqzbdadxwtqtuvaoa',
-    connectionLimit: 10, // Número máximo de conexiones en el pool
-    waitForConnections: true,
-    queueLimit: 0, // Sin límite de cola de conexiones
+    database: 'bycyqzbdadxwtqtuvaoa'
 });
 
-pool.on('acquire', function (connection) {
-    console.log('Conexión adquirida con ID:', connection.threadId);
+db.connect(function(err) {
+    if (err) throw err;
+    console.log('DATABASE CONNECTED!');
 });
 
-pool.on('error', function (err) {
-    console.error('Error en el pool de conexiones:', err);
-});
-
-module.exports = pool;
+module.exports = db ;
