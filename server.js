@@ -6,7 +6,7 @@ const logger = require('morgan');
 const cors = require('cors');
 const passport = require('passport');
 const multer = require('multer');
-// const io = require('socket.io')(server);
+const io = require('socket.io')(server);
 const mercadopago = require('mercadopago');
 mercadopago.configure({
     sandbox: true,
@@ -14,7 +14,7 @@ mercadopago.configure({
 });
 
 /*
-* IMPORTAR SOCKETS 
+* IMPORTAR SOCKETS
 */
 const ordersSocket = require('./sockets/ordersSocket');
 
@@ -50,7 +50,7 @@ app.set('port', port);
 /*
 * LLAMADO A LOS SOCKETS
 */
-// ordersSocket(io);
+ordersSocket(io);
 
 const upload = multer({
     storage: multer.memoryStorage()
