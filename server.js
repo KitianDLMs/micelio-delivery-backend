@@ -14,7 +14,7 @@ mercadopago.configure({
 });
 
 /*
-* IMPORTAR SOCKETS
+* IMPORTAR SOCKETS 
 */
 const ordersSocket = require('./sockets/ordersSocket');
 
