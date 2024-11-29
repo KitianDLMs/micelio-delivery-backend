@@ -67,7 +67,8 @@ ordersRoutes(app);
 mercadoPagoRoutes(app);
 
 
-server.listen(3000, '0.0.0.0' || 'localhost', function() {        
+server.listen(3000, '192.168.0.102' || 'localhost', function() {        
+// server.listen(3000, '0.0.0.0' || 'localhost', function() {        
     console.log('Aplicacion de NodeJS ' + port + ' Iniciada...')
 });
 
