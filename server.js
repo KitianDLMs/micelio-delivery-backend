@@ -79,7 +79,7 @@ app.use((err, req, res, next) => {
 });
 
 app.get('/',  (req, res) => {
-    res.send('Server Micelio');
+    res.send('Micelio');
 });
 
 
