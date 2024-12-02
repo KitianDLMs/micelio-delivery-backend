@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -67,8 +68,13 @@ ordersRoutes(app);
 mercadoPagoRoutes(app);
 
 
-server.listen(3000, '0.0.0.0', function() {        
-    console.log('Aplicacion de NodeJS ' + port + ' Iniciada...')
+// server.listen(3000, '0.0.0.0', function() {        
+//     console.log('Aplicacion de NodeJS ' + port + ' Iniciada...')
+// });
+
+server.listen(port, (err) => {
+    if (err) throw new Error(err);
+    console.log('Servidor corriendo en puerto', port);
 });
 
 
