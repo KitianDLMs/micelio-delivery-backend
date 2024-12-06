@@ -1,46 +1,14 @@
-const db = require('../config/config');
+const mongoose = require('mongoose');
 
-const OrderHasProducts = {};
+// Definición del esquema de 'OrderHasProducts'
+const OrderHasProductsSchema = new mongoose.Schema({
+    id_order: { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true },
+    id_product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    quantity: { type: Number, required: true },
+    created_at: { type: Date, default: Date.now },
+    updated_at: { type: Date, default: Date.now }
+});
 
-
-
-OrderHasProducts.create = (id_order, id_product, quantity, result) => {
-
-    const sql = `
-    INSERT INTO
-        order_has_products(
-            id_order,
-            id_product,
-            quantity,
-            created_at,
-            updated_at   
-        )
-    VALUES(?, ?, ?, ?, ?)
-    `;
-
-    db.query(
-        sql, 
-        [
-            id_order,
-            id_product,
-            quantity,
-            new Date(),
-            new Date(),
-        ],
-        (err, res) => {
-            if (err) {
-                // console.log('Error:', err);
-                result(err, null);
-            }
-            else {
-                // console.log('Id de la nueva order_has_products:', res.insertId);
-                result(null, res.insertId);
-            }
-        }
-
-    )
-
-}
-
+const OrderHasProducts = mongoose.model('OrderHasProducts', OrderHasProductsSchema);
 
 module.exports = OrderHasProducts;

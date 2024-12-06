@@ -1,15 +1,23 @@
-const mysql = require('mysql');
+const mongoose = require('mongoose');
 
-const db = mysql.createConnection({
-    host: 'bycyqzbdadxwtqtuvaoa-mysql.services.clever-cloud.com',
-    user: 'ufk4d4narvb0tavn',
-    password: 'XU9lekbFRYrbXsOVCY79',
-    database: 'bycyqzbdadxwtqtuvaoa'
-});
+const dbConnection = async() => {
 
-db.connect(function(err) {
-    if (err) throw err;
-    console.log('DATABASE CONNECTED!');
-});
+    try {
+        
+        await mongoose.connect( process.env.DB_CNN, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,            
+        });
 
-module.exports = db ;
+        console.log('MongoDB Online');
+        
+    } catch (error) {
+        console.log('DB ERROR', error);
+        throw new Error('Error en la base de datos - Hable con el admin');
+    }
+
+}
+
+module.exports = {
+    dbConnection
+}

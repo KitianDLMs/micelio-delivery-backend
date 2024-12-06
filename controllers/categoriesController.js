@@ -2,42 +2,44 @@ const Category = require('../models/category');
 
 module.exports = {
 
-    create(req, res) {
-
-        const category = req.body;
-
-        Category.create(category, (err, id) => {
-
-            if (err) {
-                return res.status(501).json({
-                    success: false,
-                    message: 'Hubo un error con el registro del usuario',
-                    error: err
-                });
-            }
-
+    async create(req, res) {
+        try {
+            const category = new Category(req.body);
+    
+            const savedCategory = await category.save();
+    
             return res.status(201).json({
                 success: true,
-                message: 'La categoria se creo correctamente',
-                data: `${id}` // EL ID DE LA NUEVA CATEGORIA
+                message: 'La categoría se creó correctamente',
+                data: savedCategory._id
             });
-
-        });
-
+        } catch (err) {            
+            return res.status(501).json({
+                success: false,
+                message: 'Hubo un error al registrar la categoría',
+                error: err.message
+            });
+        }
     },
+    
 
-    getAll(req, res) {
-        Category.getAll((err, data) => {
-            if (err) {
-                return res.status(501).json({
-                    success: false,
-                    message: 'Hubo un error al momento de listar las categorias',
-                    error: err
-                });
-            }
-
-            return res.status(201).json(data);
-        });
+    async getAll(req, res) {
+        try {
+            const categories = await Category.find();
+            // console.log('getAll', categories);
+            return res.status(200).json({
+                success: true,
+                message: 'Categorías listadas correctamente',
+                data: [categories]
+            });
+        } catch (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Hubo un error al momento de listar las categorías',
+                error: err
+            });
+        }
     }
+    
 
 }

@@ -5,114 +5,128 @@ const PushNotificationsController = require('../controllers/pushNotificationsCon
 
 module.exports = {
 
-    findByStatus(req, res) {
+    
+async findByStatus(req, res) {
+    try {
         const status = req.params.status;
 
-        Order.findByStatus(status, (err, data) => {
-            if (err) {
-                return res.status(501).json({
-                    success: false,
-                    message: 'Hubo un error al momento de listar las ordenes',
-                    error: err
-                });
-            }
+        // Consultar las órdenes con el estado proporcionado y poblar las referencias
+        const orders = await Order.find({ status })
+            .populate('id_client', 'name lastname image phone') // Poblar datos del cliente
+            .populate('id_address', 'address neighborhood lat lng') // Poblar datos de la dirección
+            .populate('id_delivery', 'name lastname image phone') // Poblar datos del delivery (si existe)
+            .populate('products.id', 'name description image1 image2 image3 price'); // Poblar datos de los productos
 
-            for (const d of data) {
-                d.address = JSON.parse(d.address);
-                d.client = JSON.parse(d.client);
-                d.delivery = JSON.parse(d.delivery);
-                d.products = JSON.parse(d.products);
-            }
-            
-            
-            return res.status(201).json(data);
+        // Si no se encuentran órdenes, retornar una respuesta vacía
+        if (!orders.length) {
+            return res.status(404).json({
+                success: false,
+                message: 'No se encontraron órdenes con el estado especificado',
+            });
+        }
+
+        // Responder directamente con las órdenes encontradas
+        return res.status(200).json({
+            success: true,
+            data: orders,
         });
+        } catch (err) {
+            // Manejar errores y responder con un mensaje de error
+            return res.status(500).json({
+                success: false,
+                message: 'Hubo un error al momento de listar las órdenes',
+                error: err.message,
+            });
+        }
     },
-   
-    findByDeliveryAndStatus(req, res) {
-        const id_delivery = req.params.id_delivery;
-        const status = req.params.status;
 
-        Order.findByDeliveryAndStatus(id_delivery, status, (err, data) => {
-            if (err) {
-                return res.status(501).json({
-                    success: false,
-                    message: 'Hubo un error al momento de listar las ordenes',
-                    error: err
-                });
-            }
-
-            for (const d of data) {
-                d.address = JSON.parse(d.address);
-                d.client = JSON.parse(d.client);
-                d.delivery = JSON.parse(d.delivery);
-                d.products = JSON.parse(d.products);
-            }
-            
-            
-            return res.status(201).json(data);
-        });
+    async findByDeliveryAndStatus(req, res) {
+        try {
+            const { id_delivery, status } = req.params;
+    
+            const orders = await Order.find({ id_delivery, status });
+                
+            const parsedOrders = orders.map(order => ({
+                ...order.toObject(),
+                address: JSON.parse(order.address || '{}'),
+                client: JSON.parse(order.client || '{}'),
+                delivery: JSON.parse(order.delivery || '{}'),
+                products: JSON.parse(order.products || '[]')
+            }));
+                
+            return res.status(200).json({
+                success: true,
+                message: 'Órdenes obtenidas correctamente',
+                data: parsedOrders,
+            });
+        } catch (err) {
+            // Manejo de errores
+            return res.status(500).json({
+                success: false,
+                message: 'Hubo un error al listar las órdenes',
+                error: err.message,
+            });
+        }
     },
     
-    findByClientAndStatus(req, res) {
-        const id_client = req.params.id_client;
-        const status = req.params.status;
-
-        Order.findByClientAndStatus(id_client, status, (err, data) => {
-            if (err) {
-                return res.status(501).json({
-                    success: false,
-                    message: 'Hubo un error al momento de listar las ordenes',
-                    error: err
-                });
-            }
-
-            for (const d of data) {
-                d.address = JSON.parse(d.address);
-                d.client = JSON.parse(d.client);
-                d.delivery = JSON.parse(d.delivery);
-                d.products = JSON.parse(d.products);
-            }
-            
-            
-            return res.status(201).json(data);
-        });
+    async findByClientAndStatus(req, res) {
+        try {
+            const { id_client, status } = req.body;
+                
+            const orders = await Order.find({ id_client, status });
+    
+            const parsedOrders = orders.map(order => ({
+                ...order.toObject(),
+                address: JSON.parse(order.address || '{}'),
+                client: JSON.parse(order.client || '{}'),
+                delivery: JSON.parse(order.delivery || '{}'),
+                products: JSON.parse(order.products || '[]')
+            }));
+                
+            return res.status(200).json({
+                success: true,
+                message: 'Órdenes obtenidas correctamente',
+                data: parsedOrders,
+            });
+        } catch (err) {            
+            return res.status(500).json({
+                success: false,
+                message: 'Hubo un error al listar las órdenes',
+                error: err.message,
+            });
+        }
     },
-
+    
     async create(req, res) {
-
-        const order = req.body;
-
-        Order.create(order, async (err, id) => {
-
-            if (err) {
-                return res.status(501).json({
-                    success: false,
-                    message: 'Hubo un error al momento de crear la orden',
-                    error: err
+        try {
+            const orderData = req.body;
+                
+            const order = new Order(orderData);
+            const savedOrder = await order.save();
+                
+            const productPromises = orderData.products.map(async product => {
+                const orderProduct = new OrderHasProducts({
+                    order_id: savedOrder._id,
+                    product_id: product.id,
+                    quantity: product.quantity
                 });
-            }
-
-            for (const product of order.products) {
-                await OrderHasProducts.create(id, product.id, product.quantity, (err, id_data) => {
-                    if (err) {
-                        return res.status(501).json({
-                            success: false,
-                            message: 'Hubo un error con la creacion de los productos en la orden',
-                            error: err
-                        });
-                    }
-                });
-            }
-
+                return await orderProduct.save();
+            });
+                
+            await Promise.all(productPromises);
+                
             return res.status(201).json({
                 success: true,
                 message: 'La orden se ha creado correctamente',
-                data: `${id}` // EL ID DE LA NUEVA CATEGORIA
+                data: `${savedOrder._id}`
             });
-
-        });
-
+        } catch (err) {            
+            return res.status(500).json({
+                success: false,
+                message: 'Hubo un error al momento de crear la orden',
+                error: err.message
+            });
+        }
     },
 
     updateToDispatched(req, res) {

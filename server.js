@@ -13,6 +13,7 @@ mercadopago.configure({
     sandbox: true,
     access_token: 'TEST-7543954477442042-103010-6f46675043d2151dce61b8b557f01d41-122925330'
 });
+require('./config/config').dbConnection();
 
 /*
 * IMPORTAR SOCKETS

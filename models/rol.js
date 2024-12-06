@@ -1,33 +1,16 @@
-const db = require('../config/config');
+const mongoose = require('mongoose');
 
-const Rol = {};
+// Definición del esquema de 'Rol'
+const RolSchema = new mongoose.Schema({
+    id_user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    id_rol: { type: mongoose.Schema.Types.ObjectId, ref: 'Role', required: true },
+    created_at: { type: Date, default: Date.now },
+    updated_at: { type: Date, default: Date.now },
+    image: { type: String, default: "" }, 
+    name: { type: String },
+    route: { type: String }
+});
 
-Rol.create = (id_user, id_rol, result) => {
-    const sql = `
-    INSERT INTO
-        user_has_roles(
-            id_user,
-            id_rol,
-            created_at,
-            updated_at
-        )
-    VALUES(?, ?, ?, ?)
-    `;
-
-    db.query(
-        sql,
-        [id_user, id_rol, new Date(), new Date()],
-        (err, res) => {
-            if (err) {
-                // console.log('Error:', err);
-                result(err, null);
-            }
-            else {
-                // console.log('Usuario obtenido:', res.insertId);
-                result(null, res.insertId);
-            }
-        }
-    )
-}
+const Rol = mongoose.model('Rol', RolSchema);
 
 module.exports = Rol;

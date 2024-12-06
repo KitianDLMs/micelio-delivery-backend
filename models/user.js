@@ -1,303 +1,60 @@
-const db = require('../config/config');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const Rol = require('./rol');
 
-const User = {};
+const UserSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    lastname: { type: String, required: true },
+    phone: { type: String, required: true },
+    image: { type: String, default: null },
+    password: { type: String, required: true },
+    notification_token: { type: String, default: null },
+    roles: [{ type: mongoose.Schema.Types.Map, ref: 'Rol' }],    
+    created_at: { type: Date, default: Date.now },
+    updated_at: { type: Date, default: Date.now }
+});
 
-User.findById = (id, result) => {
+// Pre-save hook for password hashing
+UserSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+});
 
-    const sql = `
-    SELECT
-        CONVERT(U.id, char) AS id,
-        U.email,
-        U.name,
-        U.lastname,
-        U.image,
-        U.phone,
-        U.password,
-        U.notification_token,
-        JSON_ARRAYAGG(
-            JSON_OBJECT(
-                'id', CONVERT(R.id, char),
-                'name', R.name,
-                'image', R.image,
-                'route', R.route
-            )
-        ) AS roles
-    FROM
-        users AS U
-    INNER JOIN
-        user_has_roles AS UHR
-    ON
-        UHR.id_user = U.id
-    INNER JOIN
-        roles AS R
-    ON
-        UHR.id_rol = R.id
-    WHERE
-        U.id = ?
-    GROUP BY
-        U.id
-    `;
+// Static method for finding a user by email
+UserSchema.statics.findByEmail = async function (email) {
+    return this.findOne({ email }).populate('roles.id');
+};
 
-    db.query(
-        sql,
-        [id],
-        (err, user) => {
-            if (err) {
-                // console.log('Error:', err);
-                result(err, null);
-            }
-            else {
-                result(null, user[0]);
-            }
-        }
-    )
+// Static method for finding a user by ID
+UserSchema.statics.findByIdWithRoles = async function (id) {
+    return this.findById(id).populate('roles.id');
+};
 
-}
+// Static method for finding delivery personnel
+UserSchema.statics.findDeliveryMen = async function () {
+    // const deliveryRoleId = /* Coloca aquí el ID del rol de delivery */;
+    return this.find({ 'roles.id': deliveryRoleId }).select('email name lastname image phone');
+};
 
-User.findDeliveryMen = (result) => {
-    const sql = `
-    SELECT
-        CONVERT(U.id, char) AS id,
-        U.email,
-        U.name,
-        U.lastname,
-        U.image,
-        U.phone
-    FROM
-        users AS U
-    INNER JOIN
-        user_has_roles AS UHR
-    ON
-        UHR.id_user = U.id 
-    INNER JOIN
-        roles AS R
-    ON
-        R.id = UHR.id_rol
-    WHERE
-        R.id = 2;
-    `;
+// Method to update the user's notification token
+UserSchema.methods.updateNotificationToken = async function (token) {
+    this.notification_token = token;
+    this.updated_at = Date.now();
+    return this.save();
+};
 
-    db.query(
-        sql,
-        (err, data) => {
-            if (err) {
-                // console.log('Error:', err);
-                result(err, null);
-            }
-            else {
-                result(null, data);
-            }
-        }
-    );
-}
+// Method to update the user's profile
+UserSchema.methods.updateProfile = async function (userData) {
+    this.name = userData.name || this.name;
+    this.lastname = userData.lastname || this.lastname;
+    this.phone = userData.phone || this.phone;
+    this.image = userData.image || this.image;
+    this.updated_at = Date.now();
+    return this.save();
+};
 
-User.findByEmail = (email, result) => {
-
-    const sql = `
-    SELECT
-        U.id,
-        U.email,
-        U.name,
-        U.lastname,
-        U.image,
-        U.phone,
-        U.password,
-        JSON_ARRAYAGG(
-            JSON_OBJECT(
-                'id', CONVERT(R.id, char),
-                'name', R.name,
-                'image', R.image,
-                'route', R.route
-            )
-        ) AS roles
-    FROM
-        users AS U
-    INNER JOIN
-        user_has_roles AS UHR
-    ON
-        UHR.id_user = U.id
-    INNER JOIN
-        roles AS R
-    ON
-        UHR.id_rol = R.id
-    WHERE
-        email = ?
-    GROUP BY
-        U.id
-    `;
-
-    db.query(
-        sql,
-        [email],
-        (err, user) => {
-            if (err) {
-                // console.log('Error:', err);
-                result(err, null);
-            }
-            else {
-                // console.log(sql);
-                // console.log('Usuario obtenido:', user[0]);
-                result(null, user[0]);
-            }
-        }
-    )
-
-}
-
-User.create = async (user, result) => {
-    
-    const hash = await bcrypt.hash(user.password, 10);
-
-    const sql = `
-        INSERT INTO
-            users(
-                email,
-                name,
-                lastname,
-                phone,
-                image,
-                password,
-                created_at,
-                updated_at
-            )
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    db.query
-    (
-        sql,
-        [
-            user.email,
-            user.name,
-            user.lastname,
-            user.phone,
-            user.image,
-            hash,
-            new Date(),
-            new Date()
-        ],
-        (err, res) => {
-            if (err) {
-                // console.log('Error:', err);
-                result(err, null);
-            }
-            else {
-                // console.log('Id del nuevo usuario:', res.insertId);
-                result(null, res.insertId);
-            }
-        }
-    )
-
-}
-
-User.update = (user, result) => {
-
-    const sql = `
-    UPDATE
-        users
-    SET
-        name = ?,
-        lastname = ?,
-        phone = ?,
-        image = ?,
-        updated_at = ?
-    WHERE
-        id = ?
-    `;
-
-    db.query
-    (
-        sql,
-        [
-            user.name,
-            user.lastname,
-            user.phone,
-            user.image,
-            new Date(),
-            user.id
-        ],
-        (err, res) => {
-            if (err) {
-                // console.log('Error:', err);
-                result(err, null);
-            }
-            else {
-                // console.log('Usuario actualizado:', user.id);
-                result(null, user.id);
-            }
-        }
-    )
-}
-
-User.updateWithoutImage = (user, result) => {
-
-    const sql = `
-    UPDATE
-        users
-    SET
-        name = ?,
-        lastname = ?,
-        phone = ?,
-        updated_at = ?
-    WHERE
-        id = ?
-    `;
-
-    db.query
-    (
-        sql,
-        [
-            user.name,
-            user.lastname,
-            user.phone,
-            new Date(),
-            user.id
-        ],
-        (err, res) => {
-            if (err) {
-                // console.log('Error:', err);
-                result(err, null);
-            }
-            else {
-                // console.log('Usuario actualizado:', user.id);
-                result(null, user.id);
-            }
-        }
-    )
-}
-
-
-User.updateNotificationToken = (id, token, result) => {
-
-    const sql = `
-    UPDATE
-        users
-    SET
-        notification_token = ?,
-        updated_at = ?
-    WHERE
-        id = ?
-    `;
-
-    db.query
-    (
-        sql,
-        [
-            token,
-            new Date(),
-            id
-        ],
-        (err, res) => {
-            if (err) {
-                // console.log('Error:', err);
-                result(err, null);
-            }
-            else {
-                result(null, id);
-            }
-        }
-    )
-}
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;
