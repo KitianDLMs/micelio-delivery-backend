@@ -28,7 +28,7 @@ module.exports = {
         try {            
             const myUser = await User.findOne({ email });
             
-            console.log(myUser);
+            // console.log(myUser);
             if (!myUser) {
                 return res.status(401).json({
                     success: false,

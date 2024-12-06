@@ -6,12 +6,10 @@ module.exports = {
         try {
             const id_user = req.params.id_user;
             const data = await Address.find({id_user});
-            
-            console.log(data);
+                        
             return res.status(201).json(data);
             
-        } catch (error) {            
-            console.log('error', error);
+        } catch (error) {                        
             return res.status(201).json(data);
         }
     },
@@ -21,8 +19,7 @@ module.exports = {
         try {
             const address = req.body;
 
-            const newAddress = await Address.create(address);
-            console.log(newAddress);
+            const newAddress = await Address.create(address);            
 
             return res.status(201).json({
                 success: true,
@@ -30,12 +27,11 @@ module.exports = {
                 data: `${newAddress}`
             });
         } catch (error) {
-            console.log(error);
-                return res.status(501).json({
-                    success: false,
-                    message: 'Hubo un error con el registro de la direccion',
-                    error: err
-                });
+            return res.status(501).json({
+                success: false,
+                message: 'Hubo un error con el registro de la direccion',
+                error: err
+            });
         }
         // Address.create(address, (err, id) => {
 

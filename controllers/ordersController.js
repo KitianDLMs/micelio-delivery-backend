@@ -10,28 +10,24 @@ async findByStatus(req, res) {
     try {
         const status = req.params.status;
 
-        // Consultar las órdenes con el estado proporcionado y poblar las referencias
         const orders = await Order.find({ status })
-            .populate('id_client', 'name lastname image phone') // Poblar datos del cliente
-            .populate('id_address', 'address neighborhood lat lng') // Poblar datos de la dirección
-            .populate('id_delivery', 'name lastname image phone') // Poblar datos del delivery (si existe)
-            .populate('products.id', 'name description image1 image2 image3 price'); // Poblar datos de los productos
-
-        // Si no se encuentran órdenes, retornar una respuesta vacía
+            .populate('id_client', 'name lastname image phone') 
+            .populate('id_address', 'address neighborhood lat lng') 
+            .populate('id_delivery', 'name lastname image phone') 
+            .populate('products.id', 'name description image1 image2 image3 price'); 
+        
         if (!orders.length) {
             return res.status(404).json({
                 success: false,
                 message: 'No se encontraron órdenes con el estado especificado',
             });
         }
-
-        // Responder directamente con las órdenes encontradas
+        
         return res.status(200).json({
             success: true,
             data: orders,
         });
-        } catch (err) {
-            // Manejar errores y responder con un mensaje de error
+        } catch (err) {            
             return res.status(500).json({
                 success: false,
                 message: 'Hubo un error al momento de listar las órdenes',
@@ -59,8 +55,7 @@ async findByStatus(req, res) {
                 message: 'Órdenes obtenidas correctamente',
                 data: parsedOrders,
             });
-        } catch (err) {
-            // Manejo de errores
+        } catch (err) {            
             return res.status(500).json({
                 success: false,
                 message: 'Hubo un error al listar las órdenes',
