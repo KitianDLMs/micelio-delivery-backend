@@ -25,21 +25,41 @@ module.exports = {
         }
     },
     
-    findByNameAndCategory(req, res) {
-        const id_category = req.params.id_category;
-        const name = req.params.name;
+    findByNameAndCategory: async (req, res) => {
+        try {
+            const id_category = req.params.id_category;
+            const name = req.params.name;
 
-        Product.findByNameAndCategory(name, id_category, (err, data) => {
-            if (err) {
-                return res.status(501).json({
-                    success: false,
-                    message: 'Hubo un error al momento de listar las categorias',
-                    error: err
+            if (!id_category || !name) {
+                return res.status(200).json({
+                    success: true,
+                    data: [],
                 });
             }
+    
+            const data = await Product.find({
+                name: { $regex: new RegExp(name, 'i') }, // Búsqueda insensible a mayúsculas/minúsculas
+                id_category,
+            });
 
+            console.log(data);
+    
+            if (!data || data.length === 0) {
+                console.log(err);
+                return res.status(404).json({
+                    success: false,
+                    message: 'No se encontraron productos para la categoría y el nombre proporcionados',
+                });
+            }
+                
             return res.status(201).json(data);
-        });
+        } catch (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'Hubo un error al momento de listar los productos',
+                error: err,
+            });
+        }
     },
 
     async create(req, res) {
