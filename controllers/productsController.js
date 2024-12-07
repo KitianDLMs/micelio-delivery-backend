@@ -41,11 +41,9 @@ module.exports = {
                 name: { $regex: new RegExp(name, 'i') }, // Búsqueda insensible a mayúsculas/minúsculas
                 id_category,
             });
-
-            console.log(data);
     
             if (!data || data.length === 0) {
-                console.log(err);
+                // console.log(err);
                 return res.status(404).json({
                     success: false,
                     message: 'No se encontraron productos para la categoría y el nombre proporcionados',
