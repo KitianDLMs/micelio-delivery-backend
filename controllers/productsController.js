@@ -38,7 +38,7 @@ module.exports = {
             }
     
             const data = await Product.find({
-                name: { $regex: new RegExp(name, 'i') }, // Búsqueda insensible a mayúsculas/minúsculas
+                name: { $regex: new RegExp(name, 'i') },
                 id_category,
             });
     

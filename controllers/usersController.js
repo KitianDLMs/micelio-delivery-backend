@@ -25,10 +25,8 @@ module.exports = {
     login: async (req, res) => {
         const { email, password } = req.body;
     
-        try {            
+        try {           
             const myUser = await User.findOne({ email });
-            
-            // console.log(myUser);
             if (!myUser) {
                 return res.status(401).json({
                     success: false,
@@ -82,13 +80,29 @@ module.exports = {
         const user = req.body;
     
         try {        
-            user.roles = [{
-                "id_user": user.id, 
-                "id_rol": "674e059f871554ef0186a527", 
-                "name": "USER_ROLE",
-                "image": "https://res.cloudinary.com/dbgdqdgds/image/upload/v1732652638/adtlzeaeba6x3fdtmujy.png",
-                "route": "/client/home"
-              }];     
+            user.roles = [
+                {
+                  "id_user": user.id, 
+                  "id_rol": "674e059f871554ef0186a527", 
+                  "name": "USER_ROLE",
+                  "image": "https://res.cloudinary.com/dbgdqdgds/image/upload/v1732652638/adtlzeaeba6x3fdtmujy.png",
+                  "route": "/client/home"
+                },
+                // {
+                //   "id_user": user.id, 
+                //   "id_rol": "674e06ed871554ef0186a528", 
+                //   "name": "DRIVER_ROLE",
+                //   "image": "https://res.cloudinary.com/dbgdqdgds/image/upload/v1732190765/nvslzhb0h9mqo2rgnlgq.png",
+                //   "route": "/client/home"
+                // },
+                // {
+                //   "id_user": user.id, 
+                //   "id_rol": "674e06ff871554ef0186a529", 
+                //   "name": "ADMIN_ROLE",
+                //   "image": "https://res.cloudinary.com/dbgdqdgds/image/upload/v1732190652/a1mo6mq8gtvgbklu5wh0.png",
+                //   "route": "/client/home"
+                // }              
+            ];     
             const data = await User.create(user);  
             user.id = `${data._id}`;
             const token = jwt.sign({ id: user.id, email: user.email }, keys.secretOrKey);
@@ -255,19 +269,16 @@ module.exports = {
     async updateWithoutImage(req, res) {
         const user = req.body;
     
-        try {            
+        try {
+            // Encuentra y actualiza el usuario por su ID
             const updatedUser = await User.findByIdAndUpdate(
-                user.id,
-                { 
-                    email: user.email, 
+                user.id, 
+                {
                     name: user.name, 
                     lastname: user.lastname, 
-                    phone: user.phone, 
-                    password: user.password,
-                    session_token: user.session_token,
-                    roles: user.roles
+                    phone: user.phone
                 },
-                { new: true }
+                { new: true } // Para que devuelva el usuario actualizado
             );
     
             if (!updatedUser) {
@@ -276,8 +287,8 @@ module.exports = {
                     message: 'Usuario no encontrado'
                 });
             }
-                
-            updatedUser.roles = JSON.parse(updatedUser.roles);
+    
+            // updatedUser.roles = JSON.parse(updatedUser.roles);
     
             return res.status(200).json({
                 success: true,
@@ -285,6 +296,7 @@ module.exports = {
                 data: updatedUser
             });
         } catch (err) {
+            console.log(err);
             return res.status(500).json({
                 success: false,
                 message: 'Hubo un error con la actualización del usuario',
@@ -292,6 +304,7 @@ module.exports = {
             });
         }
     },
+    
     
     
     async updateNotificationToken(req, res) {
