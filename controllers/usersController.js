@@ -93,14 +93,14 @@ module.exports = {
                 //   "id_rol": "674e06ed871554ef0186a528", 
                 //   "name": "DRIVER_ROLE",
                 //   "image": "https://res.cloudinary.com/dbgdqdgds/image/upload/v1732190765/nvslzhb0h9mqo2rgnlgq.png",
-                //   "route": "/client/home"
+                //   "route": "/delivery/home"
                 // },
                 // {
                 //   "id_user": user.id, 
                 //   "id_rol": "674e06ff871554ef0186a529", 
                 //   "name": "ADMIN_ROLE",
                 //   "image": "https://res.cloudinary.com/dbgdqdgds/image/upload/v1732190652/a1mo6mq8gtvgbklu5wh0.png",
-                //   "route": "/client/home"
+                //   "route": "/restaurant/home"
                 // }              
             ];     
             const data = await User.create(user);  

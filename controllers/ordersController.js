@@ -67,21 +67,21 @@ async findByStatus(req, res) {
     async findByClientAndStatus(req, res) {
         try {
             const { id_client, status } = req.body;
-                
-            const orders = await Order.find({ id_client, status });
-    
-            const parsedOrders = orders.map(order => ({
-                ...order.toObject(),
-                address: JSON.parse(order.address || '{}'),
-                client: JSON.parse(order.client || '{}'),
-                delivery: JSON.parse(order.delivery || '{}'),
-                products: JSON.parse(order.products || '[]')
-            }));
+            console.log(id_client, status);
+            const orders = await Order.find({ status: status, id_client: id_client });
+            console.log('Órdenes encontradas:', orders);
+            // const parsedOrders = orders.map(order => ({
+            //     ...order.toObject(),
+            //     address: JSON.parse(order.address || '{}'),
+            //     client: JSON.parse(order.client || '{}'),
+            //     delivery: JSON.parse(order.delivery || '{}'),
+            //     products: JSON.parse(order.products || '[]')
+            // }));
                 
             return res.status(200).json({
                 success: true,
                 message: 'Órdenes obtenidas correctamente',
-                data: parsedOrders,
+                data: orders,
             });
         } catch (err) {            
             return res.status(500).json({
