@@ -8,7 +8,11 @@ module.exports = (app, upload) => {
     // PUT -> ACTUALIZAR DATOS
     // DELETE -> ELIMINAR DATOS
 
-    app.get('/api/users/findDeliveryMen', passport.authenticate('jwt', { session: false }), usersController.findDeliveryMen);
+    app.get('/api/users/findDeliveryMen', 
+        // passport.authenticate('jwt', { session: false }), 
+        usersController.findDeliveryMen);
+
+    app.get('/api/users/fetchUser/:id', usersController.fetchUser);
 
     app.post('/api/users/create', usersController.register);
     app.post('/api/users/createWithImage', upload.array('image', 1), usersController.registerWithImage);
@@ -19,7 +23,9 @@ module.exports = (app, upload) => {
     app.put('/api/users/updateWithoutImage', 
         // passport.authenticate('jwt', { session: false }), 
         usersController.updateWithoutImage);
-    app.put('/api/users/updateNotificationToken', passport.authenticate('jwt', { session: false }), usersController.updateNotificationToken);
+    app.put('/api/users/updateNotificationToken', 
+        // passport.authenticate('jwt', { session: false }), 
+        usersController.updateNotificationToken);
 
 
 }

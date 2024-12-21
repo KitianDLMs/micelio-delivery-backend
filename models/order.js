@@ -2,17 +2,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const OrderSchema = new Schema({
-    id_client: {
+    clientId    : {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    id_address: {
+    addressId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Address',
         required: true
     },
-    id_delivery: {
+    deliveryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         default: null
@@ -36,14 +36,14 @@ const OrderSchema = new Schema({
     },
     products: [
         {
-            id: {
+            id_product: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Product',
-                required: true
+                // required: true
             },
             quantity: {
                 type: Number,
-                required: true
+                // required: true
             }
         }
     ],

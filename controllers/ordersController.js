@@ -8,14 +8,10 @@ module.exports = {
     
 async findByStatus(req, res) {
     try {
-        const status = req.params.status;
-
-        const orders = await Order.find({ status })
-            .populate('id_client', 'name lastname image phone') 
-            .populate('id_address', 'address neighborhood lat lng') 
-            .populate('id_delivery', 'name lastname image phone') 
-            .populate('products.id', 'name description image1 image2 image3 price'); 
+        const status = req.params.status;        
+        const orders = await Order.find({ status });
         
+        console.log(orders);
         if (!orders.length) {
             return res.status(404).json({
                 success: false,
@@ -39,21 +35,19 @@ async findByStatus(req, res) {
     async findByDeliveryAndStatus(req, res) {
         try {
             const { id_delivery, status } = req.params;
-    
-            const orders = await Order.find({ id_delivery, status });
-                
-            const parsedOrders = orders.map(order => ({
-                ...order.toObject(),
-                address: JSON.parse(order.address || '{}'),
-                client: JSON.parse(order.client || '{}'),
-                delivery: JSON.parse(order.delivery || '{}'),
-                products: JSON.parse(order.products || '[]')
-            }));
+            const orders = await Order.find({ status: status, deliveryId: id_delivery });
+            // const parsedOrders = orders.map(order => ({
+            //     ...order.toObject(),
+            //     address: JSON.parse(order.address || '{}'),
+            //     client: JSON.parse(order.client || '{}'),
+            //     delivery: JSON.parse(order.delivery || '{}'),
+            //     products: JSON.parse(order.products || '[]')
+            // }));
                 
             return res.status(200).json({
                 success: true,
                 message: 'Órdenes obtenidas correctamente',
-                data: parsedOrders,
+                data: orders,
             });
         } catch (err) {            
             return res.status(500).json({
@@ -66,10 +60,8 @@ async findByStatus(req, res) {
     
     async findByClientAndStatus(req, res) {
         try {
-            const { id_client, status } = req.body;
-            console.log(id_client, status);
-            const orders = await Order.find({ status: status, id_client: id_client });
-            console.log('Órdenes encontradas:', orders);
+            const { id_client, status } = req.params;            
+            const orders = await Order.find({ status: status, clientId: id_client });            
             // const parsedOrders = orders.map(order => ({
             //     ...order.toObject(),
             //     address: JSON.parse(order.address || '{}'),
@@ -94,28 +86,17 @@ async findByStatus(req, res) {
     
     async create(req, res) {
         try {
-            const orderData = req.body;
-                
+            const orderData = req.body;                
             const order = new Order(orderData);
             const savedOrder = await order.save();
-                
-            const productPromises = orderData.products.map(async product => {
-                const orderProduct = new OrderHasProducts({
-                    order_id: savedOrder._id,
-                    product_id: product.id,
-                    quantity: product.quantity
-                });
-                return await orderProduct.save();
-            });
-                
-            await Promise.all(productPromises);
                 
             return res.status(201).json({
                 success: true,
                 message: 'La orden se ha creado correctamente',
-                data: `${savedOrder._id}`
+                data: savedOrder
             });
-        } catch (err) {            
+        } catch (err) {
+            // Manejo de errores
             return res.status(500).json({
                 success: false,
                 message: 'Hubo un error al momento de crear la orden',

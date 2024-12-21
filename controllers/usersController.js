@@ -7,6 +7,36 @@ const storage = require('../utils/cloud_storage');
 
 module.exports = {
 
+    async fetchUser(req, res) {
+        const userId = req.params.id || req.user?.id;
+        
+        try {            
+            const user = await User.findById(userId);
+    
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Usuario no encontrado',
+                });
+            }            
+            // user.roles = JSON.parse(user.roles);
+
+            return res.status(200).json({
+                success: true,
+                message: 'Usuario encontrado',
+                data: user,
+            });
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({
+                success: false,
+                message: 'Hubo un error al obtener la información del usuario',
+                error: err,
+            });
+        }
+    },
+    
+
     findDeliveryMen(req, res) {
         User.findDeliveryMen((err, data) => {
             if (err) {
@@ -269,8 +299,7 @@ module.exports = {
     async updateWithoutImage(req, res) {
         const user = req.body;
     
-        try {
-            // Encuentra y actualiza el usuario por su ID
+        try {            
             const updatedUser = await User.findByIdAndUpdate(
                 user.id, 
                 {
@@ -278,7 +307,7 @@ module.exports = {
                     lastname: user.lastname, 
                     phone: user.phone
                 },
-                { new: true } // Para que devuelva el usuario actualizado
+                { new: true }
             );
     
             if (!updatedUser) {
@@ -286,10 +315,8 @@ module.exports = {
                     success: false,
                     message: 'Usuario no encontrado'
                 });
-            }
-    
+            }    
             // updatedUser.roles = JSON.parse(updatedUser.roles);
-    
             return res.status(200).json({
                 success: true,
                 message: 'El usuario se actualizó correctamente',
@@ -308,29 +335,37 @@ module.exports = {
     
     
     async updateNotificationToken(req, res) {
-
-        const id = req.body.id; 
-        const token = req.body.token; 
-
-        User.updateNotificationToken(id, token, (err, id_user) => {
-
-        
-            if (err) {
-                return res.status(501).json({
+        console.log('updateNotificationToken');
+        try {
+            const id = req.body.id; 
+            const token = req.body.token; 
+                
+            const updatedUser = await User.findByIdAndUpdate(
+                id, 
+                { session_token: token },
+                { new: true }
+            );
+            console.log(updatedUser);
+            if (!updatedUser) {
+                return res.status(404).json({
                     success: false,
-                    message: 'Hubo un error actualizando el token de notificaciones del usuario',
-                    error: err
+                    message: 'Usuario no encontrado, -notification token-'
                 });
             }
-
-            return res.status(201).json({
+    
+            return res.status(200).json({
                 success: true,
-                message: 'El token se actualizo correctamente',
-                data: id_user
+                message: 'El token se actualizó correctamente',
+                data: updatedUser
             });
-            
-        });
-
-    },
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({
+                success: false,
+                message: 'Hubo un error actualizando el token de notificaciones del usuario',
+                error: err.message
+            });
+        }
+    },    
 
 }
